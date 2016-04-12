@@ -1,0 +1,27 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf8">
+<title>{{ title }}</title>
+</head>
+<body>
+  <a href='index.html'>採択区分別一覧</a>
+  <a href='affiliation.html'>所属別一覧</a>
+
+  {% for (k, v) in data %}
+  <h2 name="{{ k }}">{{ k }}</h2>
+  {{ v | show_people }}
+  {% endfor %}
+
+<h4>フィードバック</h4>
+<p>
+<form action="http://nhiro.org:8001/api/" method="POST">
+<textarea name="note" rows=5 style="width: 100%">
+
+更新対象: {{ title }}
+</textarea>
+<button type="submit">submit</button>
+</form>
+</p>
+
+</body>
+</html>
