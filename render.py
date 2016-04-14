@@ -74,6 +74,15 @@ def process_tags(x):
         elif items[0] == u'Photo':
             photo = ':'.join(items[1:]).strip(':')
 
+        elif items[0] == u'講演':
+            activity_list.append(dict(
+                type=items[0],
+                title=u"{}「{}」".format(items[1], items[2]),
+                when=items[3],
+                who=[],
+                note=items[4],
+                ref_id=''
+            ))
         else:
             assure_length(items, 4)
             activity_list.append(dict(
