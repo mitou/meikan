@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-バックアップを取ってから一括アップデートするスクリプト
+kintone上のデータを、バックアップを取ってから一括アップデートするスクリプト
 
 オプション指定なし→ローカルキャッシュを用いてDry Run
 -r(--real) →最新のデータを取得してバックアップし、更新
 -f(--from-backup) →-rで問題が起きたとき用。バックアップを指定して、そのデータを元に更新する。
-
 """
 
 from cache import get_all, get_app
@@ -26,22 +25,7 @@ def add_a_tag(tags, a_tag, length=None):
 
 
 def convert(xs):
-    import unicodecsv as csv
-    import cStringIO
-
-    for x in xs:
-        f = cStringIO.StringIO()
-        tags = []
-        for line in x.tags.strip('\n').split('\n'):
-            tags.append(line[1:].split(line[0]))
-        csv.writer(f, encoding='utf-8').writerows(tags)
-        #print x.name
-        #print x.tags
-        #print
-        #print f.getvalue()
-        x.tags = f.getvalue()
     return xs
-
 
 def main():
     parser = argparse.ArgumentParser()
@@ -51,6 +35,9 @@ def main():
     parser.add_argument(
         '--from-backup', '-f',
         action='store', help='read from backup and write to kintone')
+    parser.add_argument(
+        '--converter', '-c',
+        action='store', help='use specific converter')
     args = parser.parse_args()
 
     if args.real:
@@ -61,7 +48,13 @@ def main():
     else:
         xs = get_all(cache=True)
 
-    xs = convert(xs)
+    if not args.converter:
+        xs = convert(xs)
+    else:
+        import imp
+        info = imp.find_module('converter/' + args.converter)
+        m = imp.load_module('m', *info)
+        xs = m.convert(xs)
 
     # when recover from backup we need to ignore revision
     if args.from_backup:
