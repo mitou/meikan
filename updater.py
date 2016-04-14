@@ -14,6 +14,7 @@ from render import pretty
 
 
 def concat_lines(x, y):
+    if isinstance(y, str): y = y.decode('utf-8')
     return x.rstrip('\n') + '\n' + y
 
 
@@ -24,8 +25,42 @@ def add_a_tag(tags, a_tag, length=None):
     tags.append(a_tag)
 
 
+def rows_to_csv(rows):
+    import cStringIO
+    import unicodecsv as csv
+    f = cStringIO.StringIO()
+    csv.writer(f, encoding='utf-8').writerows(rows)
+    return f.getvalue()
+
+
+csv_prefix = '../mitou_meikan/prosym'
 def convert(xs):
+    "プロシンおよび情報科学若手の会の過去のデータを基に所属と共著を入力"
+    import csv
+    from collections import defaultdict
+    tags = defaultdict(list)
+    for name, affil, when in csv.reader(file(csv_prefix + '_affiliation.csv')):
+        name = name.decode('utf-8')
+        tags[name].append(('所属', affil, when, ''))
+    for name, event, title, when in csv.reader(file(csv_prefix + '_title.csv')):
+        name = name.decode('utf-8')
+        title = title.replace(':', '：')
+        tags[name].append(('講演', event, title, when, ''))
+
+    num_updated_people = 0
+    num_added_tags = 0
+    for x in xs:
+        if x.name in tags:
+            print x.name
+            print rows_to_csv(tags[x.name])
+            x.tags = concat_lines(x.tags, rows_to_csv(tags[x.name]))
+            num_updated_people += 1
+            num_added_tags += len(tags[x.name])
+
+    print 'update', num_updated_people, 'people,',
+    print 'add', num_added_tags, 'tags'
     return xs
+
 
 def main():
     parser = argparse.ArgumentParser()
