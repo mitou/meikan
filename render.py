@@ -224,6 +224,5 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--use-cache', '-c',  action='store_true', help='use local cache for input instead of reading from kintone')
     parser.add_argument('--index-only', action='store_true', help='render index only')
-
     args = parser.parse_args()
     collect_tags()
