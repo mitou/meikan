@@ -29,12 +29,9 @@ for items in reader:
         continue  # skip header
 
     if section == u"公開WEB情報":
+        if not items[1]: continue
         count.update([items[2]])
         write(items, 2)
-
-    if section == u"履歴書的経歴":
-        count.update([items[7]])
-        write(items, 7)
 
     if section == u"履歴書的経歴":
         count.update([items[7]])
