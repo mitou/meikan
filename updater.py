@@ -33,16 +33,16 @@ def rows_to_csv(rows):
     return f.getvalue()
 
 
-csv_prefix = '../mitou_meikan/prosym'
-def convert(xs):
+#csv_prefix = '../mitou_meikan/prosym'
+def convert(xs, args):
     "プロシンおよび情報科学若手の会の過去のデータを基に所属と共著を入力"
     import csv
     from collections import defaultdict
     tags = defaultdict(list)
-    for name, affil, when in csv.reader(file(csv_prefix + '_affiliation.csv')):
+    for name, affil, when in csv.reader(file(args.infile + '_affiliation.csv')):
         name = name.decode('utf-8')
         tags[name].append(('所属', affil, when, ''))
-    for name, event, title, when in csv.reader(file(csv_prefix + '_title.csv')):
+    for name, event, title, when in csv.reader(file(args.infile + '_title.csv')):
         name = name.decode('utf-8')
         title = title.replace(':', '：')
         tags[name].append(('講演', event, title, when, ''))
@@ -73,6 +73,9 @@ def main():
     parser.add_argument(
         '--converter', '-c',
         action='store', help='use specific converter')
+    parser.add_argument(
+        '--infile', '-i',
+        action='store', help='input file')
     args = parser.parse_args()
 
     if args.real:
@@ -84,12 +87,12 @@ def main():
         xs = get_all(cache=True)
 
     if not args.converter:
-        xs = convert(xs)
+        xs = convert(xs, args)
     else:
         import imp
         info = imp.find_module('converter/' + args.converter)
         m = imp.load_module('m', *info)
-        xs = m.convert(xs)
+        xs = m.convert(xs, args)
 
     # when recover from backup we need to ignore revision
     if args.from_backup:
