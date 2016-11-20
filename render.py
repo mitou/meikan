@@ -146,7 +146,7 @@ def collect_tags():
     print 'output index'
     data = list(sorted((k, mitou_kubun[k]) for k in mitou_kubun))
     html = t.render(title=u'採択区分別一覧', data=data)
-    fo = codecs.open(os.path.join(OUTPUT_DIR, 'index.html'), 'w', 'utf-8')
+    fo = codecs.open(os.path.join(OUTPUT_DIR, 'kubun.html'), 'w', 'utf-8')
     fo.write(html)
     fo.close()
 
