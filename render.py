@@ -27,12 +27,14 @@ def output(x):
     fo.close()
 
 
-STRICT = True
 def assure_length(xs, length):
-    if STRICT:
-        assert len(xs) == length
-    else:
+    if args.non_strict:
+        if len(xs) != length:
+            print 'length mismatch:', length, ','.join(xs)
         xs += [''] * length
+    else:
+        if len(xs) != length:
+            raise RuntimeError(u'length mismatch: {} and {}'.format(length, u','.join(xs)).encode('utf-8'))
 
 
 def process_tags(x):
@@ -224,5 +226,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--use-cache', '-c',  action='store_true', help='use local cache for input instead of reading from kintone')
     parser.add_argument('--index-only', action='store_true', help='render index only')
+    parser.add_argument('--non-strict', action='store_true', help='skip strict format check')
     args = parser.parse_args()
     collect_tags()
