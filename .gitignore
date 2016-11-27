@@ -2,3 +2,4 @@ all_data
 secret.py
 output
 backup*
+copy_to_githubpages.sh
