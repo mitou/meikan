@@ -5,9 +5,18 @@ If this is called as a script, it refresh local cache
 """
 import pykintone
 from pykintone import model
-from kagura.myjoblib import load, dump
 from mymodel import Person
 import secret
+import unicodecsv
+
+def load(filename):
+    rd = unicodecsv.reader(file(filename), encoding='utf-8')
+    return [Person().from_tuple(args) for args in rd]
+
+def dump(people, filename):
+    wr = unicodecsv.writer(file(filename, 'w'), encoding='utf-8')
+    for p in people:
+        wr.writerow(p.to_tuple())
 
 def get_app():
     app = pykintone.app('mitou', secret.JINZAI_APPID, secret.JINZAI_TOKEN)
@@ -33,7 +42,7 @@ def get_all(cache=False, name='all_data'):
             offset += 500
             continue
         break
-    dump(result, name, True)
+    dump(result, name)
     return result
 
 if __name__ == '__main__':

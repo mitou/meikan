@@ -2,7 +2,6 @@
 
 import pykintone
 from mymodel import Person
-from kagura.myjoblib import load, dump
 from cache import get_all
 
 from jinja2.environment import Environment

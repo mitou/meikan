@@ -7,6 +7,12 @@ class Person(model.kintoneModel):
         self.note = ''
         self.tags = ''
 
+    def from_tuple(self, args):
+        (self.name, self.note, self.tags, self.record_id, self.rivision) = args
+        return self
+
+    def to_tuple(self):
+        return (self.name, self.note, self.tags, self.record_id, self.revision)
 
 class Output(model.kintoneModel):
     def __init__(self):
