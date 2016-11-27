@@ -7,6 +7,10 @@
 
 {% include 'template_navi.html' %}
 
+  {% for (k, v) in data %}
+  <h2 name="{{ k }}">{{ k }}</h2>
+  {{ v | show_people }}
+  {% endfor %}
 
 <h4>フィードバック</h4>
 <p>

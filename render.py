@@ -144,8 +144,8 @@ def collect_tags():
         for x in xs:
             output(x)
 
-    t = env.get_template('template_index.html')
-    print 'output index'
+    t = env.get_template('template_list.html')
+    print 'output kubun'
     data = list(sorted((k, mitou_kubun[k]) for k in mitou_kubun))
     html = t.render(title=u'採択区分別一覧', data=data)
     fo = codecs.open(os.path.join(OUTPUT_DIR, 'kubun.html'), 'w', 'utf-8')
@@ -159,6 +159,13 @@ def collect_tags():
         key=lambda x:-len(x[1])))
     html = t.render(title=u'所属別一覧', data=data)
     fo = codecs.open(os.path.join(OUTPUT_DIR, 'affiliation.html'), 'w', 'utf-8')
+    fo.write(html)
+    fo.close()
+
+    print 'output index.html'
+    t = env.get_template('template_index.html')
+    html = t.render(title=u'未踏名鑑')
+    fo = codecs.open(os.path.join(OUTPUT_DIR, 'index.html'), 'w', 'utf-8')
     fo.write(html)
     fo.close()
 
