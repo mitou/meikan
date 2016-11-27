@@ -112,6 +112,7 @@ def collect_tags():
     from collections import defaultdict
 
     mitou_theme = defaultdict(set)
+    mitou_sc = defaultdict(set)
     mitou_kubun = defaultdict(set)
     affiliation = defaultdict(set)
     event = defaultdict(set)
@@ -125,6 +126,9 @@ def collect_tags():
                 mitou_theme[m['theme']].add(x)
             m['pretty_kubun'] = pretty(m['when'], m['kubun'])
             mitou_kubun[m['pretty_kubun']].add(x)
+            if m['sc']:
+                mitou_sc[m['pretty_kubun']].add(x)
+
         for m in x.resume_list:
             affiliation[m['where']].add(x)
         for m in x.activity_list:
@@ -148,6 +152,13 @@ def collect_tags():
     data = list(sorted((k, mitou_kubun[k]) for k in mitou_kubun))
     html = t.render(title=u'採択区分別一覧', data=data)
     fo = codecs.open(os.path.join(OUTPUT_DIR, 'kubun.html'), 'w', 'utf-8')
+    fo.write(html)
+    fo.close()
+
+    print 'output sc'
+    data = list(sorted((k, mitou_sc[k]) for k in mitou_sc))
+    html = t.render(title=u'スパクリ一覧', data=data)
+    fo = codecs.open(os.path.join(OUTPUT_DIR, 'sc.html'), 'w', 'utf-8')
     fo.write(html)
     fo.close()
 
