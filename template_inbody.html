@@ -27,7 +27,7 @@
 <li> {{ r.pretty_kubun }} テーマ:{{ r.theme }}
 {% if r.members %}
 共同開発者:
-{% for p in r.members %}{{ p.name | to_link}}{% endfor %}
+{{ r.members | show_people }}
 {% endif %}
 
 PM: {{ r.pm }}

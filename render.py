@@ -193,11 +193,11 @@ def abbrev_people(people):
     if len(people) < 8:
         return show_people(people)
 
-    # 情報量の多い順に表示
+    # 情報量の多い順に表示,同点なら名前順
     rest = len(people) - 7
     people = sorted(
         people,
-        key=lambda p: len(p.tags) + len(p.note),
+        key=lambda p: (len(p.tags) + len(p.note), p.name),
         reverse=True)
     from itertools import islice
     people = islice(people, 7)
