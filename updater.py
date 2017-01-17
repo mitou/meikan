@@ -98,12 +98,13 @@ def main():
         xs = get_all(cache=True)
 
     if not args.converter:
-        xs = convert(xs, args)
+        to_add, to_update = convert(xs, args)
     else:
         import imp
         info = imp.find_module('converter/' + args.converter)
         m = imp.load_module('m', *info)
-        xs = m.convert(xs, args)
+        to_add, to_update = m.convert(xs, args)
+    print "{} items to update, {} items to add".format(len(to_update), len(to_add))
 
     # when recover from backup we need to ignore revision
     if args.from_backup:
@@ -112,9 +113,15 @@ def main():
 
     if args.real or args.from_backup:
         app = get_app()
-        for i in range(0, len(xs), 100):
-            print i, xs[i].name
-            app.batch_update(xs[i:i + 100])
+
+        result = app.batch_create(to_add)
+        assert result.ok
+
+        for i in range(0, len(to_update), 100):
+            print i, to_update[i].name
+            result = app.batch_update(to_update[i:i + 100])
+            assert result.ok
+
     else:
         # for debug: Run this script with `ipython -i`
         globals()['xs'] = xs
