@@ -33,33 +33,44 @@ def rows_to_csv(rows):
     return f.getvalue()
 
 
-#csv_prefix = '../mitou_meikan/prosym'
 def convert(xs, args):
-    "プロシンおよび情報科学若手の会の過去のデータを基に所属と共著を入力"
-    import csv
-    from collections import defaultdict
-    tags = defaultdict(list)
-    for name, affil, when in csv.reader(file(args.infile + '_affiliation.csv')):
-        name = name.decode('utf-8')
-        tags[name].append(('所属', affil, when, ''))
-    for name, event, title, when in csv.reader(file(args.infile + '_title.csv')):
-        name = name.decode('utf-8')
-        title = title.replace(':', '：')
-        tags[name].append(('講演', event, title, when, ''))
+    "add new creators from 2015_creators_170113.csv"
+    import unicodecsv as csv
+    name2x = dict((x.name, x) for x in xs)
+    to_update = []
+    to_add = []
 
-    num_updated_people = 0
-    num_added_tags = 0
-    for x in xs:
-        if x.name in tags:
-            print x.name
-            print rows_to_csv(tags[x.name])
-            x.tags = concat_lines(x.tags, rows_to_csv(tags[x.name]))
-            num_updated_people += 1
-            num_added_tags += len(tags[x.name])
+    rd = csv.reader(file('2015_creators_170113.csv'), encoding='utf-8')
+    for row in rd:
+        year = row[2]
+        kubun = row[3]
+        sc = row[4]
+        theme = row[5]
+        name = row[6]
+        pm = row[9]
+        affil1 = row[7]
+        affil2 = row[8]
 
-    print 'update', num_updated_people, 'people,',
-    print 'add', num_added_tags, 'tags'
-    return xs
+        if name in name2x:
+            x = name2x[name]
+            to_update.append(x)
+        else:
+            from mymodel import Person
+            x = Person()
+            x.name = name
+            to_add.append(x)
+
+        tags = [
+            ["未踏採択", year, kubun, sc, theme, pm],
+            ["所属", affil1, "{}年時点".format(year), affil2]]
+        tags = rows_to_csv(tags)
+        x.tags = concat_lines(x.tags, tags)
+        print name
+        print tags
+
+    return to_add, to_update
+
+
 
 
 def main():
